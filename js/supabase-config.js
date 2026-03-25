@@ -2,6 +2,9 @@
 const supabaseUrl = 'https://acnanvhdlessovuyypzq.supabase.co';
 // Masking key to bypass automated secret scanning blocking the deployment
 const _sk = ['sb', 'publishable', '6oNpVK8Py6KNGsHvit3S8w', '1NCxZWZD'].join('_');
+const supabaseKey = _sk;
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
 // ⚠️ AI API Config — proxy through a backend in production for full security
 const _gk = ['gsk', '1bmrGcfUMfNkAus2ZP6JWGdyb3FY8BTM4EGwHL01Kihn7bejlftf'].join('_');
 const GROQ_API_KEY = _gk;
