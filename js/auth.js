@@ -17,10 +17,29 @@ function safeNavigate(view) {
 }
 
 async function checkUserSession() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+    
+    if (sessionError) {
+        console.error("Session Error:", sessionError);
+    }
+
     if (session) {
+        console.log("Session detected:", session);
         window.currentUser = session.user;
-        const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', window.currentUser.id).single();
+        
+        const userId = window.currentUser?.id;
+        
+        if (!userId) {
+            console.error("CRITICAL: session.user.id is undefined!", window.currentUser);
+            return;
+        }
+
+        const { data: profile, error: profileError } = await supabaseClient.from('profiles').select('*').eq('id', userId).single();
+        
+        if (profileError) {
+            console.error("Profile Fetch Error:", profileError);
+        }
+
         window.currentProfile = profile ? { ...profile, ...(window.currentUser.user_metadata || {}) } : null;
 
         if (window.currentProfile) {

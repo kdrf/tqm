@@ -94,7 +94,7 @@ async function loadStudentDashboard() {
         `;
     } else {
         recentGrid.innerHTML = completed.slice(0, 5).map(s => {
-            const subject = (s.tests && s.tests.subject) ? s.tests.subject : 'QarıÅŸıq';
+            const subject = (s.tests && s.tests.subject) ? s.tests.subject : 'Qarışıq';
             const title = (s.tests && s.tests.title) ? s.tests.title : 'İmtahan';
             const scoreColor = s.score >= 80 ? '#2563eb' : (s.score >= 50 ? '#f97316' : '#ef4444');
             const bgTrackColor = '#f1f5f9';
@@ -214,7 +214,7 @@ window.startPublicTest = async function(testId) {
     window.currentActiveTest = test;
     window.currentActiveSession = session;
     
-    showToast('İmtahan otaÄŸına keçilir...', 'success');
+    showToast('İmtahan otağına keçilir...', 'success');
     
     // Defer redirect slightly to allow toast to render
     setTimeout(() => {
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const code = codeInput ? codeInput.value.trim() : '';
             if(!code) return showToast('Zəhmət olmasa imtahan kodunu yazın', 'error');
             
-            showToast('Kod üzrə giriÅŸ axtarılır...', 'info');
+            showToast('Kod üzrə giriş axtarılır...', 'info');
             
             supabaseClient.from('tests').select('*').eq('access_code', code).single()
             .then(({data, error}) => {
@@ -268,7 +268,7 @@ async function loadStudentResults() {
   if (error || !sessions || sessions.length === 0) {
     container.innerHTML = `
       <div class="results-empty" style="text-align:center;padding:50px 20px;color:#94a3b8; background:white; border-radius:16px;">
-        <div style="font-size:40px; margin-bottom:12px;">ğŸ“‰</div>
+        <div style="font-size:40px; margin-bottom:12px;">📉</div>
         <div>Hələ heç bir nəticəyə sahib deyilsiniz. Testləri həll etdikcə burada görünəcək.</div>
       </div>
     `;
@@ -320,7 +320,7 @@ async function loadGeneralAnalysis() {
         // Calculate subject performance
         const subjectStats = {};
         sessions.forEach(s => {
-            const sub = (s.tests && s.tests.subject) ? s.tests.subject : 'QarıÅŸıq';
+            const sub = (s.tests && s.tests.subject) ? s.tests.subject : 'Qarışıq';
             if (!subjectStats[sub]) subjectStats[sub] = { sum: 0, count: 0 };
             subjectStats[sub].sum += s.score;
             subjectStats[sub].count += 1;
@@ -352,7 +352,7 @@ async function loadGeneralAnalysis() {
         const elBestSub = document.getElementById('an-best-sub');
         const elWorstSub = document.getElementById('an-worst-sub');
 
-        if(elTotalSub) elTotalSub.textContent = 'Ãœmumi imtahan';
+        if(elTotalSub) elTotalSub.textContent = 'Ümumi imtahan';
         if(elAvgSub) elAvgSub.textContent = 'Orta müvəffəqiyyət';
         if(elBestSub) elBestSub.textContent = `Mənimsəmə: ${subjectAverages[0].avg}%`;
         if(elWorstSub) elWorstSub.textContent = `Mənimsəmə: ${subjectAverages[subjectAverages.length - 1].avg}%`;
@@ -437,7 +437,7 @@ async function loadLibraryTests() {
 
   if (error) {
     console.error('Error fetching library tests:', error);
-    libGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Xəta baÅŸ verdi.</div>`;
+    libGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#ef4444;padding:40px;">Xəta baş verdi.</div>`;
     return;
   }
 
@@ -453,7 +453,7 @@ async function loadLibraryTests() {
   libGrid.innerHTML = tests.map(t => {
     const meta = parseMeta(t.metadata);
     const author = (t.profiles && t.profiles.full_name) ? t.profiles.full_name : 'Müəllim';
-    const tag = t.subject || 'QarıÅŸıq';
+    const tag = t.subject || 'Qarışıq';
     return `
       <div class="exam-card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
@@ -463,8 +463,8 @@ async function loadLibraryTests() {
         <h3 style="font-size:16px; font-weight:700; color:#0f172a; margin-bottom:6px;">${t.title}</h3>
         <p style="font-size:13px; color:#64748b; margin-bottom:16px; line-height:1.4;">${meta.description || 'Müəllim tərəfindən sınaq'}</p>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:12px; border-top:1px dashed #e2e8f0;">
-          <div style="font-size:12px; color:#94a3b8;">ğŸ‘¤ ${author}</div>
-          <button onclick="startPublicTest('${t.id}')" style="background:#f3e8ff; color:#7c3aed; padding:6px 12px; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" onmouseover="this.style.background='#e9d5ff'" onmouseout="this.style.background='#f3e8ff'">BaÅŸla</button>
+          <div style="font-size:12px; color:#94a3b8;">👤 ${author}</div>
+          <button onclick="startPublicTest('${t.id}')" style="background:#f3e8ff; color:#7c3aed; padding:6px 12px; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" onmouseover="this.style.background='#e9d5ff'" onmouseout="this.style.background='#f3e8ff'">Başla</button>
         </div>
       </div>
     `;
@@ -498,28 +498,53 @@ window.openProfileModal = async function() {
   const modal = document.getElementById('profile-edit-modal');
   if (modal) modal.style.display = 'flex';
 
-  // Re-fetch fresh profile data from DB to ensure pre-fill is always current
-  if (window.currentProfile && window.currentProfile.id) {
-    const { data: freshProfile, error } = await supabaseClient
-      .from('profiles')
-      .select('*')
-      .eq('id', window.currentProfile.id)
-      .single();
-    if (!error && freshProfile) {
-      Object.assign(window.currentProfile, freshProfile);
-    }
-  }
+  const el = (id) => document.getElementById(id);
 
-  // Pre-fill fields directly from profile columns
-  const p = window.currentProfile;
-  if (p) {
-    const el = (id) => document.getElementById(id);
-    if (el('edit-school')) el('edit-school').value = p.school || '';
-    if (el('edit-grade')) el('edit-grade').value = p.grade || '';
-    if (el('edit-group')) el('edit-group').value = p.exam_group || '';
-    if (el('edit-target-score')) el('edit-target-score').value = p.target_score || '';
-    if (el('edit-preparation')) el('edit-preparation').value = p.preparation || 'intermediate';
-  }
+  const fillFields = (school, grade, group, targetScore, preparation) => {
+      const elSchool = el('edit-school');
+      if (elSchool) elSchool.value = school || '';
+
+      const elGrade = el('edit-grade');
+      if (elGrade) { elGrade.value = grade || ''; elGrade.dispatchEvent(new Event('change')); }
+
+      const elGroup = el('edit-group');
+      if (elGroup) { elGroup.value = group || ''; elGroup.dispatchEvent(new Event('change')); }
+
+      const elTarget = el('edit-target-score');
+      if (elTarget) elTarget.value = targetScore || '';
+
+      const elPrep = el('edit-preparation');
+      if (elPrep) { elPrep.value = preparation || ''; elPrep.dispatchEvent(new Event('change')); }
+  };
+
+  // Step 1: Pre-fill from in-memory currentProfile immediately (no async wait)
+  const p = window.currentProfile || {};
+  fillFields(p.school, p.grade, p.exam_group || p.group, p.target_score, p.preparation);
+
+  // Step 2: Fetch both DB profile and live auth metadata to get the most current values
+  const [dbResult, authResult] = await Promise.all([
+      supabaseClient.from('profiles').select('*').eq('id', p.id).single(),
+      supabaseClient.auth.getUser()
+  ]);
+
+  // DB fields (only non-null values, e.g. school, target_score)
+  const dbProfile = (!dbResult.error && dbResult.data) ? dbResult.data : {};
+  // Auth metadata (grade, group, preparation etc.)
+  const meta = authResult.data?.user?.user_metadata || {};
+
+  // Merge: DB wins for its own columns; meta wins for grade/group/preparation
+  const merged = {
+      school:       dbProfile.school       || p.school       || '',
+      target_score: dbProfile.target_score ?? p.target_score ?? '',
+      grade:        meta.grade             || p.grade         || '',
+      group:        meta.exam_group || meta.group || p.exam_group || p.group || '',
+      preparation:  meta.preparation       || p.preparation   || ''
+  };
+
+  // Update the living currentProfile with the fresh merged state
+  Object.assign(window.currentProfile, merged, { exam_group: merged.group });
+
+  fillFields(merged.school, merged.grade, merged.group, merged.target_score, merged.preparation);
 };
 
 window.closeProfileModal = function() {
@@ -530,36 +555,48 @@ window.closeProfileModal = function() {
 window.saveProfileChanges = async function() {
   if (!window.currentProfile) return showToast('Profil tapılmadı', 'error');
 
-  const school = document.getElementById('edit-school')?.value?.trim() || '';
-  const grade = document.getElementById('edit-grade')?.value || '';
-  const group = document.getElementById('edit-group')?.value || '';
+  const btn = document.getElementById('btn-save-profile');
+  if (btn) { btn.disabled = true; btn.textContent = 'Yadda Saxlanılır...'; }
+
+  const school      = document.getElementById('edit-school')?.value?.trim() || '';
+  const grade       = document.getElementById('edit-grade')?.value || '';
+  const group       = document.getElementById('edit-group')?.value || '';
   const targetScore = document.getElementById('edit-target-score')?.value || '';
   const preparation = document.getElementById('edit-preparation')?.value || '';
 
-  const updates = {
-    school: school,
-    grade: grade,
-    exam_group: group,
-    target_score: parseInt(targetScore) || null,
-    preparation: preparation
-  };
+  // The 'profiles' database table only stores id, role, and full_name.
+  // ALL other profile fields belong exclusively in Auth user_metadata!
+  const { data: authData, error: authError } = await supabaseClient.auth.updateUser({
+      data: { 
+          school: school,
+          grade: grade, 
+          group: group, 
+          exam_group: group, 
+          target_score: parseInt(targetScore) || null, 
+          preparation: preparation 
+      }
+  });
 
-  const { error } = await supabaseClient
-    .from('profiles')
-    .update(updates)
-    .eq('id', window.currentProfile.id);
+  if (btn) { btn.disabled = false; btn.textContent = 'Yadda Saxla'; }
 
-  if (error) {
-    console.error('Profile update error:', error);
-    showToast('Profil yenilənərkən xəta baÅŸ verdi: ' + error.message, 'error');
-  } else {
-    // Update local state
-    Object.assign(window.currentProfile, updates);
-    showToast('Profil uÄŸurla yeniləndi!', 'success');
-    closeProfileModal();
-    // Refresh dashboard to reflect changes
-    if (typeof loadStudentDashboard === 'function') loadStudentDashboard();
+  if (authError) {
+    console.error('Auth metadata update error:', authError);
+    showToast('Profil yenilənərkən xəta baş verdi: ' + authError.message, 'error');
+    return;
   }
+
+  // Sync currentProfile with fresh auth metadata to prevent stale state on reopen
+  const freshMeta = authData?.user?.user_metadata || {};
+  Object.assign(window.currentProfile, freshMeta);
+
+  // Also sync window.currentUser.user_metadata for consistency
+  if (window.currentUser) {
+      window.currentUser.user_metadata = { ...(window.currentUser.user_metadata || {}), ...freshMeta };
+  }
+
+  showToast('Profil uğurla yeniləndi! 🎉', 'success');
+  closeProfileModal();
+  if (typeof loadStudentDashboard === 'function') loadStudentDashboard();
 };
 
 // --- Library Tab Switcher ---
@@ -618,7 +655,7 @@ window.openTestDetails = async function(sessionId, isFromRouter = false) {
 
     const test = session.tests || {};
     document.getElementById('analysis-header-title').textContent = test.title || 'İmtahan';
-    document.getElementById('analysis-header-meta').textContent = `${(test.subject ? test.subject + ' â€¢ ' : '')}${sgDate(session.started_at)}`;
+    document.getElementById('analysis-header-meta').textContent = `${(test.subject ? test.subject + ' • ' : '')}${sgDate(session.started_at)}`;
     document.getElementById('analysis-stat-result').textContent = `${session.score || 0}%`;
 
     let correctCount = answers ? answers.filter(a => a.is_correct).length : 0;
@@ -645,28 +682,27 @@ window.openTestDetails = async function(sessionId, isFromRouter = false) {
     document.getElementById('analysis-stat-time').textContent = formatDuration(totalSeconds);
 
     // Time Management Calculation
-    let fastAnswers = 0; // < 20s
-    let normalAnswers = 0; // 20 - 60s
-    let slowAnswers = 0; // > 60s
+    let fastAnswers = 0;
+    let normalAnswers = 0;
+    let slowAnswers = 0;
     let minTime = Infinity;
     let maxTime = -Infinity;
     let minTimeIdx = -1;
     let maxTimeIdx = -1;
-    
+
     if (answers && answers.length > 0) {
         answers.forEach((ans, idx) => {
             const t = ans.time_spent_seconds || 0;
             if (t < 20) fastAnswers++;
             else if (t <= 60) normalAnswers++;
             else slowAnswers++;
-
-            if (t > 0) { // only count actual effort
+            if (t > 0) {
                 if (t < minTime) { minTime = t; minTimeIdx = idx + 1; }
                 if (t > maxTime) { maxTime = t; maxTimeIdx = idx + 1; }
             }
         });
     }
-    
+
     if (minTime === Infinity) minTime = 0;
     if (maxTime === -Infinity) maxTime = 0;
 
@@ -674,138 +710,96 @@ window.openTestDetails = async function(sessionId, isFromRouter = false) {
     const normalPct = totalQuestions ? Math.round((normalAnswers / totalQuestions) * 100) : 0;
     const slowPct = totalQuestions ? Math.round((slowAnswers / totalQuestions) * 100) : 0;
 
-    document.getElementById('time-management-content').innerHTML = `
-        <div style="font-size:14px; color:#64748b; line-height:1.6; margin-bottom: 20px;">
-            <div style="margin-bottom:8px; display:flex; justify-content:space-between;"><span>â€¢ Orta sual vaxtı:</span> <b style="color:#1e293b">${totalQuestions ? Math.round(totalSeconds / totalQuestions) : 0} san</b></div>
-            <div style="margin-bottom:8px; display:flex; justify-content:space-between;"><span>â€¢ Æn sürətli cavab:</span> <b style="color:#1e293b">${minTime} san ${minTimeIdx > 0 ? '(Sual ' + minTimeIdx + ')' : ''}</b></div>
-            <div style="margin-bottom:8px; display:flex; justify-content:space-between;"><span>â€¢ Æn yavaÅŸ cavab:</span> <b style="color:#1e293b">${maxTime} san ${maxTimeIdx > 0 ? '(Sual ' + maxTimeIdx + ')' : ''}</b></div>
-        </div>
+    const tmEl = document.getElementById('time-management-content');
+    if (tmEl) {
+        tmEl.innerHTML = `
+            <div style="font-size:14px; color:#64748b; line-height:1.6; margin-bottom:20px;">
+                <div style="margin-bottom:8px; display:flex; justify-content:space-between;"><span>• Orta sual vaxtı:</span><b style="color:#1e293b">${totalQuestions ? Math.round(totalSeconds / totalQuestions) : 0} san</b></div>
+                <div style="margin-bottom:8px; display:flex; justify-content:space-between;"><span>• Ən sürətli cavab:</span><b style="color:#1e293b">${minTime} san${minTimeIdx > 0 ? ' (Sual ' + minTimeIdx + ')' : ''}</b></div>
+                <div style="margin-bottom:8px; display:flex; justify-content:space-between;"><span>• Ən yavaş cavab:</span><b style="color:#1e293b">${maxTime} san${maxTimeIdx > 0 ? ' (Sual ' + maxTimeIdx + ')' : ''}</b></div>
+            </div>
+            <div style="display:flex; height:12px; border-radius:6px; overflow:hidden; margin-bottom:12px;">
+                <div style="width:${fastPct}%; background:#10b981;" title="Sürətli"></div>
+                <div style="width:${normalPct}%; background:#3b82f6;" title="Normal"></div>
+                <div style="width:${slowPct}%; background:#f59e0b;" title="Yavaş"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; text-transform:uppercase;">
+                <div style="color:#10b981;">Sürətli</div>
+                <div style="color:#3b82f6;">Normal</div>
+                <div style="color:#f59e0b;">Yavaş</div>
+            </div>
+        `;
+    }
 
-        <div style="display:flex; height:12px; border-radius:6px; overflow:hidden; margin-bottom:12px;">
-            <div style="width:${fastPct}%; background:#10b981;" title="Sürətli (${fastAnswers} sual)"></div>
-            <div style="width:${normalPct}%; background:#3b82f6;" title="Normal (${normalAnswers} sual)"></div>
-            <div style="width:${slowPct}%; background:#f59e0b;" title="YavaÅŸ (${slowAnswers} sual)"></div>
-        </div>
-        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;">
-            <div style="color:#10b981;">Sürətli</div>
-            <div style="color:#3b82f6;">Normal</div>
-            <div style="color:#f59e0b;">YavaÅŸ</div>
-        </div>
-    `;
-
-    // AI Performance stub
     let insightPhrase = "";
-    if (session.score >= 80) insightPhrase = "Æla nəticə! Mövzunu yaxÅŸı mənimsəmisiniz. Sürətli cavablandırma bacarıÄŸınız diqqət çəkir.";
-    else if (session.score >= 50) insightPhrase = "Orta nəticə. Bəzi konseptlərdə və ya vaxt idarəetməsində yavaÅŸlama var. Səhv etdiyiniz sualların izahına diqqətlə baxın.";
-    else insightPhrase = "Zəif nəticə. Bu fənn üzrə əsas anlayıÅŸları yenidən təkrarlamaq faydalı olardı.";
+    if (session.score >= 80) insightPhrase = "Əla nəticə! Mövzunu yaxşı mənimsəmisiniz.";
+    else if (session.score >= 50) insightPhrase = "Orta nəticə. Bəzi konseptlərdə yavaşlama var.";
+    else insightPhrase = "Zəif nəticə. Bu fənn üzrə əsas anlayışları yenidən təkrarlamaq faydalı olardı.";
 
     let timeInsight = "";
-    if (slowAnswers > totalQuestions / 2) timeInsight = " Sualların çoxunda düÅŸünmək üçün uzun vaxt sərf etmisiniz.";
-    else if (fastAnswers > totalQuestions / 2 && session.score < 50) timeInsight = " Ã‡ox sürətli lakin diqqətsiz cavab verməyiniz ehtimal olunur, diqqətli olun.";
+    if (slowAnswers > totalQuestions / 2) timeInsight = " Sualların çoxunda düşünmək üçün uzun vaxt sərf etmisiniz.";
+    else if (fastAnswers > totalQuestions / 2 && session.score < 50) timeInsight = " Çox sürətli lakin diqqətsiz cavab verməyiniz ehtimal olunur.";
 
-    document.getElementById('ai-performance-insights').innerHTML = `
-      <div style="background:#f0f9ff; border-left:4px solid #3b82f6; padding:16px; border-radius:12px; margin-bottom:16px;">
-        <p style="margin-bottom:8px; font-size:15px; font-weight:600; color:#1e3a8a;">Sizə özəl analiz:</p>
-        <p style="margin-bottom:12px; line-height:1.5;">Sizin nəticəniz <b>${session.score}%</b> təÅŸkil edir. ${insightPhrase}${timeInsight}</p>
-        <div style="font-size:13px; color:#64748b; font-style:italic;">
-            Tips: Səhv cavablandırdıÄŸınız <b style="color:#ef4444">${totalQuestions - correctCount}</b> sual üzərində vizual təhlil aparmaqla sürətinizi və dəqiqliyinizi artıra bilərsiniz.
-        </div>
-      </div>
-    `;
+    const aiEl = document.getElementById('ai-performance-insights');
+    if (aiEl) {
+        aiEl.innerHTML = `<div style="background:#f0f9ff;border-left:4px solid #3b82f6;padding:16px;border-radius:12px;margin-bottom:16px;"><p style="margin-bottom:8px;font-size:15px;font-weight:600;color:#1e3a8a;">Sizə özəl analiz:</p><p style="margin-bottom:12px;line-height:1.5;">Sizin nəticəniz <b>${session.score}%</b> təşkil edir. ${insightPhrase}${timeInsight}</p><div style="font-size:13px;color:#64748b;font-style:italic;">Tips: Səhv cavablandırdığınız <b style="color:#ef4444">${totalQuestions - correctCount}</b> sual üzərində vizual təhlil aparmaqla nəticənizi artıra bilərsiniz.</div></div>`;
+    }
 
-    // Render Review Questions
+    const reviewListEl = document.getElementById('review-questions-list');
     if (!answers || answers.length === 0) {
-        document.getElementById('review-questions-list').innerHTML = `<div style="padding: 20px; color: #64748b;">Suallar və cavablar tapılmadı. Ola bilsin testi yarımçıq saxlamısınız.</div>`;
+        if (reviewListEl) reviewListEl.innerHTML = '<div style="padding:20px;color:#64748b;">Suallar və cavablar tapılmadı.</div>';
         return;
     }
 
     const reviewHtml = answers.map((ans, idx) => {
         const q = ans.questions;
         if (!q) return '';
-        
         let options = [];
-        if (typeof q.options === 'string') {
-            try { options = JSON.parse(q.options); } catch(e) {}
-        } else if (Array.isArray(q.options)) {
-            options = q.options;
-        }
+        if (typeof q.options === 'string') { try { options = JSON.parse(q.options); } catch(e) {} }
+        else if (Array.isArray(q.options)) { options = q.options; }
 
         return `
-            <div class="review-question-card" data-correct="${ans.is_correct}" style="border-left-color: ${ans.is_correct ? '#10b981' : '#ef4444'}">
-                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="font-size:16px; font-weight:700; color:#0f172a;">Sual ${idx + 1}</div>
-                        <div style="font-size:12px; color:#64748b; font-weight:500; display:flex; align-items:center; gap:4px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                            ${ans.time_spent_seconds || 0} san
-                        </div>
+            <div class="review-question-card" data-correct="${ans.is_correct}" style="border-left-color:${ans.is_correct ? '#10b981' : '#ef4444'}">
+                <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div style="font-size:16px;font-weight:700;color:#0f172a;">Sual ${idx + 1}</div>
+                        <div style="font-size:12px;color:#64748b;font-weight:500;">${ans.time_spent_seconds || 0} san</div>
                     </div>
-                    <div style="font-size:12px; font-weight:700; padding:4px 8px; border-radius:6px; background:${ans.is_correct ? '#d1fae5' : '#fee2e2'}; color:${ans.is_correct ? '#059669' : '#b91c1c'};">
-                        ${ans.is_correct ? 'DÃœZGÃœN' : 'SÆHV'}
+                    <div style="font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;background:${ans.is_correct ? '#d1fae5' : '#fee2e2'};color:${ans.is_correct ? '#059669' : '#b91c1c'};">
+                        ${ans.is_correct ? 'DÜZGÜN' : 'SƏHV'}
                     </div>
                 </div>
-                <p style="font-size:15px; color:#334155; margin-bottom:16px; line-height:1.5;">${q.question_text}</p>
-                <div style="display:flex; flex-direction:column; gap:8px;">
+                <p style="font-size:15px;color:#334155;margin-bottom:16px;line-height:1.5;">${q.question_text}</p>
+                <div style="display:flex;flex-direction:column;gap:8px;">
                     ${options.map((opt, oIdx) => {
-                        let isSelected = ans.selected_index === oIdx;
-                        let isActuallyCorrect = q.correct_index === oIdx;
-                        
-                        let bgColor = '#f8fafc';
-                        let borderColor = '#e2e8f0';
-                        let textColor = '#475569';
-                        let icon = '';
-
-                        if (isActuallyCorrect) {
-                            bgColor = '#ecfdf5';
-                            borderColor = '#10b981';
-                            textColor = '#065f46';
-                            icon = 'âœ“';
-                        } else if (isSelected && !isActuallyCorrect) {
-                            bgColor = '#fef2f2';
-                            borderColor = '#ef4444';
-                            textColor = '#991b1b';
-                            icon = 'âœ•';
-                        }
-
-                        return `
-                            <div style="padding:12px 16px; border:2px solid ${borderColor}; border-radius:8px; background:${bgColor}; color:${textColor}; display:flex; justify-content:space-between; align-items:center; font-size:14px; font-weight:600;">
-                                <span>${opt}</span>
-                                <span style="font-weight:800;">${icon}</span>
-                            </div>
-                        `;
+                        let isSel = ans.selected_index === oIdx;
+                        let isCorr = q.correct_index === oIdx;
+                        let bg = '#f8fafc', border = '#e2e8f0', color = '#475569', icon = '';
+                        if (isCorr) { bg='#ecfdf5';border='#10b981';color='#065f46';icon='✓'; }
+                        else if (isSel && !isCorr) { bg='#fef2f2';border='#ef4444';color='#991b1b';icon='✕'; }
+                        return `<div style="padding:12px 16px;border:2px solid ${border};border-radius:8px;background:${bg};color:${color};display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;"><span>${opt}</span><span>${icon}</span></div>`;
                     }).join('')}
                 </div>
-            </div>
-        `;
+            </div>`;
     }).join('');
 
-    document.getElementById('review-questions-list').innerHTML = reviewHtml;
-    
-    // FIX D7: Use navigateTo instead of raw hash assignment
-    document.getElementById('btn-back-analytics').onclick = function() {
-        window.navigateTo('student-dashboard');
-    };
+    if (reviewListEl) reviewListEl.innerHTML = reviewHtml;
+    const backBtn = document.getElementById('btn-back-analytics');
+    if (backBtn) backBtn.onclick = function() { window.navigateTo('student-dashboard'); };
 };
 
 window.filterAnalysis = function(type) {
     const cards = document.querySelectorAll('.review-question-card');
     const bAll = document.getElementById('filter-all');
     const bWrong = document.getElementById('filter-wrong');
-    
     if (type === 'all') {
-        if(bAll) bAll.style.cssText = "background:#3b82f6; color:white; border-radius:10px;";
-        if(bWrong) bWrong.style.cssText = "background:#f1f5f9; color:#475569; border-radius:10px;";
+        if(bAll) bAll.style.cssText = "background:#3b82f6;color:white;border-radius:10px;";
+        if(bWrong) bWrong.style.cssText = "background:#f1f5f9;color:#475569;border-radius:10px;";
         cards.forEach(c => c.style.display = 'block');
     } else {
-        if(bAll) bAll.style.cssText = "background:#f1f5f9; color:#475569; border-radius:10px;";
-        if(bWrong) bWrong.style.cssText = "background:#3b82f6; color:white; border-radius:10px;";
-        cards.forEach(c => {
-            if (c.getAttribute('data-correct') === 'true') {
-                c.style.display = 'none';
-            } else {
-                c.style.display = 'block';
-            }
-        });
+        if(bAll) bAll.style.cssText = "background:#f1f5f9;color:#475569;border-radius:10px;";
+        if(bWrong) bWrong.style.cssText = "background:#3b82f6;color:white;border-radius:10px;";
+        cards.forEach(c => { c.style.display = c.getAttribute('data-correct') === 'true' ? 'none' : 'block'; });
     }
 };
 
@@ -819,7 +813,6 @@ window.initExamAnalysis = function() {
     contentEl.style.display = 'none';
 
     const r = window.lastExamResult;
-    // FIX D8: Friendly message + safe redirect when result is missing (page refresh)
     if (!r) {
         if (typeof showToast === 'function') showToast('Nəticəni görmək üçün imtahana qayıdın.', 'warning');
         setTimeout(() => { window.navigateTo('student-dashboard'); }, 1200);
@@ -833,45 +826,40 @@ window.initExamAnalysis = function() {
     const total     = r.total || 0;
     const sessionId = r.sessionId || '';
 
-    // Color scheme
     const scoreColor = score >= 80 ? '#16a34a' : (score >= 50 ? '#f59e0b' : '#ef4444');
     const scoreBg    = score >= 80
         ? 'linear-gradient(90deg,#16a34a,#22c55e)'
         : (score >= 50 ? 'linear-gradient(90deg,#f59e0b,#fbbf24)' : 'linear-gradient(90deg,#ef4444,#f87171)');
 
-    // Score hero
-    if (el('ea-score-emoji')) el('ea-score-emoji').textContent = score >= 80 ? 'ğŸ†' : (score >= 50 ? 'ğŸ“ˆ' : 'ğŸ’ª');
+    if (el('ea-score-emoji')) el('ea-score-emoji').textContent = score >= 80 ? '\uD83C\uDFC6' : (score >= 50 ? '\uD83D\uDCC8' : '\uD83D\uDCAA');
     if (el('ea-test-title')) el('ea-test-title').textContent = r.testTitle || 'Test';
     if (el('ea-score-val'))  { el('ea-score-val').textContent = score; el('ea-score-val').style.color = scoreColor; }
     if (el('ea-score-label')) {
-        el('ea-score-label').textContent = score >= 80 ? 'Æla nəticə!' : (score >= 50 ? 'Orta nəticə' : 'YaxÅŸılaÅŸmaq olar');
+        el('ea-score-label').textContent = score >= 80 ? '\u018fla n\u0259tic\u0259!' : (score >= 50 ? 'Orta n\u0259tic\u0259' : 'Yax\u015f\u0131la\u015fmaq olar');
         el('ea-score-label').style.color = scoreColor;
     }
 
-    // Stats
     if (el('ea-total'))   el('ea-total').textContent   = total;
     if (el('ea-correct')) el('ea-correct').textContent = correct;
     if (el('ea-wrong'))   el('ea-wrong').textContent   = wrong;
 
-    // Progress bar
     if (el('ea-score-fraction')) el('ea-score-fraction').textContent = `${correct} / ${total}`;
     if (el('ea-score-bar')) {
         el('ea-score-bar').style.background = scoreBg;
         setTimeout(() => { el('ea-score-bar').style.width = score + '%'; }, 120);
     }
 
-    // AI motivational message
     let aiEmoji, aiTitle, aiMessage, aiBg, aiBorder, aiTitleColor, aiMsgColor;
     if (score >= 80) {
-        aiEmoji = '🌟'; aiBg = '#f0fdf4'; aiBorder = '#16a34a'; aiTitleColor = '#14532d'; aiMsgColor = '#166534';
+        aiEmoji = '\uD83C\uDF1F'; aiBg = '#f0fdf4'; aiBorder = '#16a34a'; aiTitleColor = '#14532d'; aiMsgColor = '#166534';
         aiTitle   = 'Əla nəticə! Sən çox yaxşı işlədin!';
-        aiMessage = `${score}% — bu həqiqətən görkəmli bir nəticədir! Mövzuları dərindən mənimsəmisən, bu sürəti qoru. Gündən-günə daha da güclənirsən — uğurun açarı məhz bu cür ardıcıllıqdır. 💪`;
+        aiMessage = `${score}% — bu həqiqətən görkəmli bir nəticədir! Mövzuları dərindən mənimsəmisiniz, bu sürəti qoru. Gündən-günə daha da güclənirsən — uğurun açarı məhz bu cür ardıcıllıqdır. 💪`;
     } else if (score >= 50) {
-        aiEmoji = '📘'; aiBg = '#fffbeb'; aiBorder = '#f59e0b'; aiTitleColor = '#78350f'; aiMsgColor = '#92400e';
+        aiEmoji = '\uD83D\uDCD8'; aiBg = '#fffbeb'; aiBorder = '#f59e0b'; aiTitleColor = '#78350f'; aiMsgColor = '#92400e';
         aiTitle   = 'Yaxşı başlanğıc — davam et!';
         aiMessage = `${score}% — orta bir nəticədir, amma bu inkişafın başlanğıcıdır. Səhv etdiyin suallara diqqətlə bax, hansı mövzularda boşluğun olduğunu müəyyən et. Hər addımda bir az daha irəliləyirsən! 🎯`;
     } else {
-        aiEmoji = '🚀'; aiBg = '#eff6ff'; aiBorder = '#2563eb'; aiTitleColor = '#1e3a8a'; aiMsgColor = '#1e40af';
+        aiEmoji = '\uD83D\uDE80'; aiBg = '#eff6ff'; aiBorder = '#2563eb'; aiTitleColor = '#1e3a8a'; aiMsgColor = '#1e40af';
         aiTitle   = 'Narahat olma — bu bir başlanğıcdır!';
         aiMessage = `${score}% — bu dəfə çətin oldu, lakin hər sınaq sənə bir şey öyrədir. Əsas anlayışları yenidən nəzərdən keçir, əvvəlcədən baxdığın suallara qayıt. Uğur sadəcə davam etməkdir — sən bacararsan! 💙`;
     }
@@ -882,11 +870,9 @@ window.initExamAnalysis = function() {
     if (el('ea-ai-title'))   { el('ea-ai-title').textContent = aiTitle; el('ea-ai-title').style.color = aiTitleColor; }
     if (el('ea-ai-message')) { el('ea-ai-message').textContent = aiMessage; el('ea-ai-message').style.color = aiMsgColor; }
 
-    // Wire up detail button
     const detailBtn = el('ea-btn-detailed');
     if (detailBtn) {
         detailBtn.onclick = function() {
-            // FIX D6: navigateTo removes the double-hash issue
             window.navigateTo(sessionId ? `student-results:detail:${sessionId}` : 'student-results');
         };
     }
@@ -1011,7 +997,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const topic = document.getElementById('student-topic')?.value?.trim() || '';
 
             if (!subject) return showToast('Zəhmət olmasa fənn seçin.', 'error');
-            if (!window.currentProfile) return showToast('GiriÅŸ edin.', 'error');
+            if (!window.currentProfile) return showToast('Giriş edin.', 'error');
 
             genBtn.disabled = true;
             genBtn.textContent = 'â³ Suallar hazırlanır...';
@@ -1022,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const prompt = `Sən bir müəllim robotu (AI) olaraq Azərbaycan dilində ${qCount} ədəd çoxseçimli sual yaratmalısan.
 Fənn: ${subjectLabel}
 Sinif: ${grade}
-Ã‡ətinlik: ${diffLabel}
+Çətinlik: ${diffLabel}
 ${topic ? 'Mövzu: ' + topic : ''}
 
 Hər sual üçün:
@@ -1030,7 +1016,7 @@ Hər sual üçün:
 - options: tam 5 variant (array)
 - correct_index: düzgün cavabın indeksi (0-4)
 
-YALNIZ JSON array formatında cavab ver, baÅŸqa heç nə yazma. Format:
+YALNIZ JSON array formatında cavab ver, başqa heç nə yazma. Format:
 [{"question_text":"...","options":["A","B","C","D","E"],"correct_index":0},...]`;
 
             try {
@@ -1108,7 +1094,7 @@ YALNIZ JSON array formatında cavab ver, baÅŸqa heç nə yazma. Format:
                 showToast('Xəta: ' + err.message, 'error');
             } finally {
                 genBtn.disabled = false;
-                genBtn.textContent = 'Testi Hazırla və BaÅŸla';
+                genBtn.textContent = 'Testi Hazırla və Başla';
             }
         });
     }

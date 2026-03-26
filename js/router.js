@@ -58,14 +58,20 @@
             // Populate currentProfile if missing (e.g. direct URL load)
             if (!window.currentProfile) {
                 window.currentUser = session.user;
-                const { data: profile } = await supabaseClient
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', window.currentUser.id)
-                    .single();
-                window.currentProfile = profile
-                    ? { ...profile, ...(window.currentUser.user_metadata || {}) }
-                    : null;
+                const userId = window.currentUser?.id;
+                
+                if (userId) {
+                    const { data: profile } = await supabaseClient
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', userId)
+                        .single();
+                    window.currentProfile = profile
+                        ? { ...profile, ...(window.currentUser.user_metadata || {}) }
+                        : null;
+                } else {
+                    console.error("Router: session.user.id is undefined!", window.currentUser);
+                }
             }
 
             if (window.currentProfile) {

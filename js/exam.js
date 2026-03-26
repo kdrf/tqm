@@ -89,9 +89,10 @@ function renderQuestion(isNew = true) {
     const q = examQuestions[currentQuestionIndex];
     if (!q) return;
 
-    document.getElementById('exam-question-indicator').textContent = `Sual ${currentQuestionIndex + 1}`;
+    // We can hide the global indicator since we will build it explicitly into the question header, like the mockup.
+    const indicator = document.getElementById('exam-question-indicator');
+    if (indicator) indicator.style.display = 'none';
 
-    // Ensure options array
     let options = [];
     if (typeof q.options === 'string') {
         try { options = JSON.parse(q.options); } catch(e) {}
@@ -99,33 +100,79 @@ function renderQuestion(isNew = true) {
         options = q.options;
     }
 
+    const labels = ['A variantı', 'B variantı', 'C variantı', 'D variantı', 'E variantı'];
+
     const html = `
-        <div class="question-card" style="background:white; border-radius:16px; padding:32px; box-shadow:0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01); border:1px solid #f1f5f9; margin-bottom:24px;">
-            <h3 style="font-size:18px; font-weight:700; line-height:1.6; color:#0f172a; margin-bottom:28px;">${currentQuestionIndex + 1}. ${q.question_text}</h3>
-            <div class="options-list" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="background: white; border-radius: 16px; padding: 48px; max-width: 800px; margin: 0 auto; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.03);">
+            
+            <!-- Top: Question Number -->
+            <div style="font-size: 14px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                Sual ${currentQuestionIndex + 1}
+            </div>
+
+            <!-- Header: Question Text -->
+            <div style="margin-bottom: 48px;">
+                <h2 style="font-size: 18px; font-weight: 600; color: #334155; line-height: 1.7; margin: 0; font-family: 'Inter', sans-serif;">
+                    ${q.question_text}
+                </h2>
+            </div>
+
+            <!-- Options List -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
                 ${options.map((opt, idx) => {
                     const isSelected = userAnswers[q.id] === idx;
+                    const defaultLabel = String.fromCharCode(65 + idx) + ' variantı'; // e.g. "A variantı"
+                    const label = labels[idx] || defaultLabel;
+                    
+                    const bg = isSelected ? '#ffffff' : '#ffffff';
+                    const shadow = isSelected ? '0 8px 20px -6px rgba(124, 58, 237, 0.15)' : 'none';
+                    const border = isSelected ? '1px solid white' : '1px solid #f1f5f9';
+                    const leftBorder = isSelected ? '4px solid #7c3aed' : '4px solid transparent';
+                    const textColor = isSelected ? '#334155' : '#94a3b8';
+
+                    // Custom Radio Button
+                    const radioBorder = isSelected ? '2px solid #7c3aed' : '2px solid #cbd5e1';
+                    const radioInner = isSelected ? '<div style="width:10px; height:10px; background:#7c3aed; border-radius:50%;"></div>' : '';
+
                     return `
-                    <div class="option-item ${isSelected ? 'selected' : ''}"
-                         onclick="selectOption('${q.id}', ${idx})"
-                         style="padding:16px 20px; border:2px solid ${isSelected ? '#3b82f6' : '#e2e8f0'}; border-radius:12px; cursor:pointer; background:${isSelected ? '#eff6ff' : 'white'}; display:flex; align-items:center; gap:16px;">
-                        <div style="width:24px; height:24px; border-radius:50%; border:2px solid ${isSelected ? '#3b82f6' : '#cbd5e1'}; background:${isSelected ? '#3b82f6' : 'white'}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            ${isSelected ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                    <div onclick="selectOption('${q.id}', ${idx})" 
+                         style="display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; background: ${bg}; border: ${border}; border-left: ${leftBorder}; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; box-shadow: ${shadow};">
+                        
+                        <div style="font-size: 16px; color: ${textColor}; font-weight: ${isSelected ? '600' : '500'}; line-height: 1.5; padding-right: 16px; display: flex; text-align: left;">
+                            <span style="min-width: 80px; margin-right: 8px;">${label}</span>
+                            <span>${opt}</span>
                         </div>
-                        <span style="font-size:15px; color:${isSelected ? '#1e3a8a' : '#334155'}; font-weight:${isSelected ? '600' : '500'}; line-height:1.5;">${opt}</span>
+
+                        <!-- Custom Radio Circle -->
+                        <div style="width: 22px; height: 22px; border-radius: 50%; border: ${radioBorder}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s ease;">
+                            ${radioInner}
+                        </div>
+                        
                     </div>
                     `;
                 }).join('')}
             </div>
+
         </div>
     `;
 
     container.innerHTML = html;
 
-    // Toggle Buttons
-    document.getElementById('btn-prev-question').style.display = currentQuestionIndex > 0 ? 'block' : 'none';
-    document.getElementById('btn-next-question').style.display = currentQuestionIndex < examQuestions.length - 1 ? 'block' : 'none';
-    document.getElementById('btn-finish-exam').style.display = 'block';
+    // Toggle Navigation Buttons
+    const btnPrev = document.getElementById('btn-prev-question');
+    const btnNext = document.getElementById('btn-next-question');
+    const btnFinish = document.getElementById('btn-finish-exam');
+
+    if (btnPrev) btnPrev.style.display = currentQuestionIndex > 0 ? 'inline-flex' : 'none';
+    
+    // Always show finish button now, as requested.
+    if (btnFinish) btnFinish.style.display = 'inline-flex';
+
+    if (currentQuestionIndex < examQuestions.length - 1) {
+        if (btnNext) btnNext.style.display = 'inline-flex';
+    } else {
+        if (btnNext) btnNext.style.display = 'none';
+    }
 }
 
 window.selectOption = function(questionId, optionIndex) {
